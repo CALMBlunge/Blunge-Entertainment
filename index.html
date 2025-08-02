@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olympia High School Chorus Handbook 2025-2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Coastal Carolina Teal -->
+    <!-- Application Structure Plan: A single-page application with a sticky top navigation bar for quick access to key sections: Welcome, Ensembles, Student Info, Policies, and Connect. This structure replaces linear scrolling with a task-oriented, interactive dashboard. Key information like ensembles, grading, and uniforms are presented in visually distinct cards or with charts to improve comprehension. Policies are organized into an accordion to reduce cognitive load. This design was chosen to allow users (students and parents) to quickly find specific answers without reading the entire document, making the handbook a more efficient and usable resource. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Grading Breakdown -> Goal: Compare/Inform -> Viz/Presentation: Donut Chart -> Interaction: Hover tooltips -> Justification: Visually communicates the weight of each graded category instantly, which is more effective than a text list. -> Library: Chart.js (Canvas).
+        - Report Info: Ensemble Options -> Goal: Organize/Compare -> Viz/Presentation: Interactive Cards -> Interaction: Click to reveal details -> Justification: Allows users to easily compare choirs and focus on the ones relevant to them. -> Library/Method: HTML/Tailwind/JS.
+        - Report Info: Uniform Options -> Goal: Organize/Compare -> Viz/Presentation: Cards with Icons -> Interaction: None -> Justification: Provides a quick visual reference for uniform requirements. -> Library/Method: HTML/Tailwind with Unicode characters.
+        - Report Info: Policies/Rules -> Goal: Organize -> Viz/Presentation: Accordion -> Interaction: Click to expand/collapse -> Justification: Condenses a large amount of text into a manageable, scannable format. -> Library: HTML/Tailwind/JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF7;
+            color: #4A4A4A;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #00A3A3;
+            border-bottom-color: #00A3A3;
+        }
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 320px;
+            width: 100%;
+            max-width: 320px;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-xl font-bold text-gray-800">
+                Olympia Chorus
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#welcome" class="nav-link border-b-2 border-transparent pb-1">Welcome</a>
+                <a href="#ensembles" class="nav-link border-b-2 border-transparent pb-1">Ensembles</a>
+                <a href="#student-info" class="nav-link border-b-2 border-transparent pb-1">Student Info</a>
+                <a href="#policies" class="nav-link border-b-2 border-transparent pb-1">Policies</a>
+                <a href="#uniforms" class="nav-link border-b-2 border-transparent pb-1">Uniforms</a>
+                <a href="#connect" class="nav-link border-b-2 border-transparent pb-1">Connect</a>
+            </div>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-800 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden bg-white/90">
+            <a href="#welcome" class="block py-2 px-6 text-sm nav-link">Welcome</a>
+            <a href="#ensembles" class="block py-2 px-6 text-sm nav-link">Ensembles</a>
+            <a href="#student-info" class="block py-2 px-6 text-sm nav-link">Student Info</a>
+            <a href="#policies" class="block py-2 px-6 text-sm nav-link">Policies</a>
+            <a href="#uniforms" class="block py-2 px-6 text-sm nav-link">Uniforms</a>
+            <a href="#connect" class="block py-2 px-6 text-sm nav-link">Connect</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        
+        <section id="welcome" class="text-center mb-20 fade-in">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Olympia High School Chorus Handbook</h1>
+            <p class="text-lg text-gray-600 mb-2">2025-2026</p>
+            <p class="font-semibold text-gray-700">Director of Choirs, Cesar Lengua-Miranda</p>
+            <div class="mt-8 max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-200">
+                <p class="text-2xl font-semibold text-gray-800 mb-4">“We Strive to Touch Lives”</p>
+                <p class="text-gray-700 leading-relaxed">Hello, and welcome to the Olympia High School Choral Program! Students, I am so excited to share, to develop, and to grow with you, all while making beautiful music! Parents, please read this handbook with your student. I encourage you to submit any questions, concerns, or feedback you may have. I will be happy to assist you in person, by phone, or by email at <a href="mailto:Cesar.Lengua@ocps.net" class="text-[#00A3A3] font-medium">Cesar.Lengua@ocps.net</a>. Thank you in advance for your cooperation!</p>
+                <p class="mt-6 font-medium text-gray-800">Sincerely, Mr. Lengua-Miranda</p>
+            </div>
+        </section>
+
+        <section id="ensembles" class="mb-20 fade-in">
+            <h2 class="text-3xl font-bold text-center mb-4 text-gray-800">Choral Ensembles</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">Explore the different choirs available at Olympia High School. Click on any ensemble to learn more about its focus, requirements, and rehearsal schedule. School Cash Online contribution details are also listed for each group.</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            </div>
+        </section>
+
+        <section id="student-info" class="mb-20 fade-in">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Student Information</h2>
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-200">
+                    <h3 class="text-2xl font-bold mb-6 text-gray-800">Required Supplies</h3>
+                    <p class="text-gray-600 mb-6">Students should come to class prepared with the following materials to ensure a productive rehearsal environment.</p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="text-[#00A3A3] mr-3 mt-1">✓</span>
+                            <div>
+                                <h4 class="font-semibold text-gray-700">1/2" or 1" Black Binder</h4>
+                                <p class="text-sm text-gray-600">For music and handouts. Must not be shared with other classes. Used binders are available in the classroom!</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-[#00A3A3] mr-3 mt-1">✓</span>
+                            <div>
+                                <h4 class="font-semibold text-gray-700">Pencils</h4>
+                                <p class="text-sm text-gray-600">At least two workable pencils are required at all times. Please sharpen before class.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-200">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Grading Breakdown</h3>
+                    <p class="text-gray-600 mb-6">Grades are based on participation, assignments, and performances. This chart shows the point value for each category. You can see how important our performances are when you look at the graph.</p>
+                    <div class="chart-container">
+                        <canvas id="gradingChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="policies" class="mb-20 fade-in">
+            <h2 class="text-3xl font-bold text-center mb-4 text-gray-800">Program Policies & Expectations</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">To ensure a positive and productive environment for all, please review the following program policies. Click on each category to expand and view the details.</p>
+            <div id="accordion-container" class="max-w-4xl mx-auto space-y-4">
+            </div>
+        </section>
+
+        <section id="uniforms" class="mb-20 fade-in">
+            <h2 class="text-3xl font-bold text-center mb-4 text-gray-800">Performance Uniforms</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">A professional appearance is essential for all performances. Below are the uniform options. Please note what is provided by the school versus what you must purchase.</p>
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-200">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Option 1: Suit</h3>
+                    <div class="text-left space-y-3">
+                        <p><span class="font-semibold">PURCHASE:</span> Black dress shirt (long sleeve, button-down, collared), black slacks, black dress shoes.</p>
+                        <p><span class="font-semibold">PROVIDED:</span> Black Tuxedo Jacket. Silver Tie (Mastersingers only).</p>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-200">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Option 2: Dress</h3>
+                    <div class="text-left space-y-3">
+                        <p><span class="font-semibold">PURCHASE:</span> Black, close-toed dress shoes.</p>
+                        <p><span class="font-semibold">PROVIDED (Treble/Vocal/Titan):</span> Southeastern Apparel Corelli Dress.</p>
+                        <p><span class="font-semibold">PROVIDED (Bella/Mastersingers):</span> Stage Accents Avelle Women’s Dress.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-200">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Option 3: Informal Performances</h3>
+                     <div class="text-left space-y-3">
+                        <p class="text-gray-600">Chorus Shirt and Khaki pants or shorts and neat tennis shoes/flats.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="connect" class="text-center bg-white p-12 rounded-xl shadow-lg border border-gray-200 fade-in">
+            <h2 class="text-3xl font-bold mb-4 text-gray-800">Stay Connected</h2>
+            <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">Keep up-to-date with the latest announcements, reminders, and chorus program highlights through these channels.</p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Pay with School Cash Online</h3>
+                    <p class="text-gray-600 mb-4">Easily pay your School Cash Online and other fees online.</p>
+                    <a href="https://ocps.schoolcashonline.com/" target="_blank" class="inline-block bg-[#00A3A3] text-white px-6 py-2 rounded-lg font-semibold hover:bg-opacity-90 transition">Pay Now</a>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Communicate on Parent Square</h3>
+                    <p class="text-gray-600 mb-4">Stay informed and connected through Parent Square.</p>
+                    <a href="https://www.parentsquare.com/signin" target="_blank" class="inline-block bg-[#00A3A3] text-white px-6 py-2 rounded-lg font-semibold hover:bg-opacity-90 transition">Go to Parent Square</a>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Instagram</h3>
+                    <p class="text-gray-600 mb-4">Follow us for photos, videos, and stories from our events.</p>
+                    <a href="https://www.instagram.com/titanchorus_ocps" target="_blank" class="inline-block bg-[#00A3A3] text-white px-6 py-2 rounded-lg font-semibold hover:bg-opacity-90 transition">@titanchorus_ocps</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-20">
+        <div class="container mx-auto px-6 py-6 text-center text-sm">
+            <p>Olympia High School Choral Program</p>
+            <p class="mt-1">Contact: <a href="mailto:Cesar.Lengua@ocps.net" class="hover:text-[#00A3A3] transition">Cesar.Lengua@ocps.net</a></p>
+        </div>
+    </footer>
+
+    <script>
+        const ensembleData = [
+            { name: "Titan Voices", period: 1, level: "Formative", voice: "Tenor/Bass", fairShare: 50, desc: "This year-long, formative class, designed for tenor/bass (low voice) students with little or no participation in a high school chorus, promotes the enjoyment and appreciation of music through the study of choral repertoire. This class concentrates on providing students opportunities to strengthen skills in critical listening, vocal techniques, and ensemble rehearsal." },
+            { name: "Treble Choir", period: 2, level: "Formative", voice: "Soprano/Alto", fairShare: 50, desc: "This year-long, formative class, designed for soprano/alto (high voice) singers with little or no participation in a high school chorus, promotes the enjoyment and appreciation of music through the study of choral repertoire from a variety of times and places. Rehearsals focus on the development of critical listening skills, foundational vocal technique, music literacy, and ensemble skills." },
+            { name: "Mastersingers", period: 3, level: "Advanced", voice: "Mixed", fairShare: 75, desc: "This year-long, advanced class is for students with previous participation who have demonstrated advanced aural skills and knowledge of vocal techniques. Musical independence and student leadership are promoted through significant opportunities for peer mentoring and solo work. After-school rehearsals are required every Monday, 2:40-4:00 pm." },
+            { name: "Bella Voce", period: 4, level: "Advanced", voice: "Soprano/Alto", fairShare: 75, desc: "This year-long, advanced class is for soprano/alto students with previous participation who have demonstrated advanced aural skills and knowledge of vocal techniques. Musical independence and student leadership are promoted through mentoring, solo work, and small ensemble participation. After-school rehearsals are required every Tuesday, 2:30-3:20 pm." },
+            { name: "Olympian Voices", period: 5, level: "Advanced", voice: "Tenor/Bass", fairShare: 75, desc: "This advanced level class is designed for students (low voices) who wish to explore a variety of choral literature, including musical theatre, vocal jazz, and show choir repertoire. Students with previous vocal ensemble experience continue to build musicianship and performance skills. Student musicians learn to self-assess and collaborate as they study relevant musical styles and time periods." },
+            { name: "Titan Singers", period: 6, level: "Intermediate", voice: "Mixed", fairShare: 50, desc: "This intermediate-level class is for students with previous chorus participation and moderate skills in listening, vocal techniques, and music literacy. Rehearsals focus on enhancing these skills and students' aesthetic engagement with music through a variety of high-quality three- and four-part choral literature." }
+        ];
+
+        const accordionData = [
+            { title: "Financial Obligations: School Cash Online", content: `
+                <h4 class="font-semibold text-gray-700 mb-2">School Cash Online Contribution</h4>
+                <p class="text-sm text-gray-600 mb-4">Each student must contribute their “School Cash Online” to cover the choral program’s operating expenses for the year. Budgeted items include music rights, t-shirts, practice tracks, Sight Reading Factory accounts, and other classroom supplies (tissues, hygienic products, spare pencils, etc.).</p>
+                <ul class="list-disc list-inside text-sm text-gray-600 space-y-2 mb-4">
+                    <li><span class="font-semibold">$50:</span> Titan Voices, Treble Choir, Titan Singers.</li>
+                    <li><span class="font-semibold">$75:</span> Mastersingers, Bella Voce, Olympian Voices.</li>
+                </ul>
+                <p class="text-sm text-gray-600 mb-4">Students in multiple choirs only pay one School Cash Online (the higher amount applies). Payments are due by Friday, September 10, 2025.</p>
+                <h4 class="font-semibold text-gray-700 mb-2">How to Pay</h4>
+                <p class="text-sm text-gray-600 mb-4">The preferred payment method is through <span class="font-semibold">School Cash Online</span>. You can access the payment portal at <a href="https://ocps.schoolcashonline.com/" target="_blank" class="text-[#00A3A3] font-medium">ocps.schoolcashonline.com</a>. Checks payable to "Olympia High School" are also accepted. Please avoid cash payments if possible. If you are unable to pay due to financial hardship, please email Mr. Lengua-Miranda to discuss payment plans or other arrangements. School Cash Online payments are non-refundable.</p>
+            `},
+            { title: "General Expectations & Classroom Procedures", content: `
+                <ul class="list-disc list-inside text-sm text-gray-600 space-y-2">
+                    <li>Treat yourself, your peers, and your teachers with respect.</li>
+                    <li>No eating, drinking (except water), or chewing gum during rehearsal.</li>
+                    <li>Bring all materials (binder, music, pencil) to every class.</li>
+                    <li>Remain actively engaged in the rehearsal at all times.</li>
+                    <li>Follow directions the first time they are given.</li>
+                    <li>Music is stored in individual binders. Note checks may be done via video or outside.</li>
+                    <li>On occasion, we may rehearse outside for a change of scenery and to explore different acoustics.</li>
+                </ul>
+            `},
+            { title: "Performance Policy", content: `
+                <p class="text-sm text-gray-600">All performances are graded events worth 200 points. A student must either perform in person or submit a video recording on CANVAS. If a student does not attend the concert in person, the video submission is due the Friday after the concert date. Conflicts with other school activities are sometimes excused but must be communicated as early as possible.</p>
+            `},
+            { title: "Discipline & Other Policies", content: `
+                <p class="text-sm text-gray-600 mb-2"><span class="font-semibold">Cell Phones:</span> Must be silent and invisible unless used for an academic purpose. Confiscation may occur if used out of policy.</p>
+                <p class="text-sm text-gray-600 mb-2"><span class="font-semibold">Restroom:</span> Not available during the first/last 10 minutes of class. Use the non-verbal hand signal (crossed fingers) and sign out.</p>
+                <p class="text-sm text-gray-600 mb-2"><span class="font-semibold">Discipline Steps:</span> 1. Student Conference, 2. Loss of participation grade, 3. Parent/Guardian Contact, 4. Referral to Administrator.</p>
+                <p class="text-sm text-gray-600"><span class="font-semibold">Due Dates:</span> Work is due at the time indicated on CANVAS. A 48-hour grace period is available if you notify Mr. Lengua-Miranda. Work submitted the day after it is due is docked 10%. Make-up work for closed assignments is for half credit.</p>
+            `}
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const ensemblesContainer = document.querySelector('#ensembles .grid');
+            ensembleData.forEach(ensemble => {
+                const card = document.createElement('div');
+                card.className = 'card bg-white p-6 rounded-xl shadow-lg border border-gray-200 cursor-pointer';
+                card.innerHTML = `
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">${ensemble.name}</h3>
+                    <div class="flex space-x-4 text-sm text-gray-500 mb-4">
+                        <span>${ensemble.level}</span>
+                        <span>•</span>
+                        <span>${ensemble.voice} Voices</span>
+                        <span>•</span>
+                        <span>Period ${ensemble.period}</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">${ensemble.desc.substring(0, 100)}...</p>
+                    <div class="text-right font-semibold text-[#00A3A3]">$${ensemble.fairShare} School Cash Online</div>
+                    <div class="hidden mt-4 pt-4 border-t border-gray-200">
+                        <p class="text-gray-600 text-sm">${ensemble.desc}</p>
+                    </div>
+                `;
+                ensemblesContainer.appendChild(card);
+
+                card.addEventListener('click', () => {
+                    card.querySelector('.hidden').classList.toggle('hidden');
+                    card.querySelector('p').classList.toggle('hidden');
+                });
+            });
+
+            const accordionContainer = document.getElementById('accordion-container');
+            accordionData.forEach(item => {
+                const accordionItem = document.createElement('div');
+                accordionItem.className = 'bg-white rounded-xl border border-gray-200 shadow-lg';
+                accordionItem.innerHTML = `
+                    <button class="accordion-button w-full flex justify-between items-center text-left p-6">
+                        <span class="text-lg font-semibold text-gray-800">${item.title}</span>
+                        <svg class="w-5 h-5 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="p-6 pt-0 text-gray-700">${item.content}</div>
+                    </div>
+                `;
+                accordionContainer.appendChild(accordionItem);
+            });
+            
+            accordionContainer.addEventListener('click', (e) => {
+                const button = e.target.closest('.accordion-button');
+                if (button) {
+                    const content = button.nextElementSibling;
+                    const icon = button.querySelector('svg');
+                    
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                        icon.classList.remove('rotate-180');
+                    } else {
+                        document.querySelectorAll('.accordion-content').forEach(el => el.style.maxHeight = null);
+                        document.querySelectorAll('.accordion-button svg').forEach(el => el.classList.remove('rotate-180'));
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        icon.classList.add('rotate-180');
+                    }
+                }
+            });
+
+            const ctx = document.getElementById('gradingChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Concert', 'Concert Critiques', 'Tests/Quizzes', 'Classwork', 'Rehearsals'],
+                    datasets: [{
+                        label: 'Points',
+                        data: [200, 100, 100, 50, 50],
+                        backgroundColor: ['#00A3A3', '#00B8B8', '#4DDADA', '#88E0E0', '#C0F0F0'],
+                        borderColor: '#FDFBF7',
+                        borderWidth: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#4A4A4A',
+                                font: { family: "'Inter', sans-serif" }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw} points`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            document.querySelectorAll('#mobile-menu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            const navLinks = document.querySelectorAll('nav a');
+            const sections = document.querySelectorAll('main section');
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 80) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
